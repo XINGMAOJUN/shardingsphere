@@ -1,0 +1,128 @@
+server:
+  port: 9999
+spring:
+  application:
+    name: zkt-demo
+  datasource:
+    dynamic:
+      primary: master
+      strict: false
+      datasource:
+        master:
+          username: root
+          password: brzj123456
+          type: com.alibaba.druid.pool.DruidDataSource
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://39.102.43.179:9934/test1?useUnicode=true&characterEncoding=utf-8&mysqlEncoding=utf8&useSSL=false&serverTimezone=GMT
+        slave:
+          username: root
+          password: brzj123456
+          type: com.alibaba.druid.pool.DruidDataSource
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://39.102.43.179:9934/test2?useUnicode=true&characterEncoding=utf-8&mysqlEncoding=utf8&useSSL=false&serverTimezone=GMT
+        h2:
+          username: sa
+          password: sa
+          #表明使用的数据库平台是h2
+          platform: h2
+          type: com.alibaba.druid.pool.DruidDataSource
+          driver-class-name: org.h2.Driver
+          url: jdbc:h2:mem:dbtest
+          # 进行该配置后，每次启动程序，程序都会运行resources/db/schema.sql文件，对数据库的结构进行操作。
+          schema: classpath:db/schema.sql
+          # 进行该配置后，每次启动程序，程序都会运行resources/db/data.sql文件，对数据库的数据操作。
+          data: classpath:db/data.sql
+
+  main:
+    allow-bean-definition-overriding: true
+  shardingsphere:
+    props:
+      sql:
+        show: true
+    datasource:
+      common:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        validationQuery: SELECT 1 FROM DUAL
+      names: db1,db2
+      db1:
+        username: root
+        password: brzj123456
+        url: jdbc:mysql://39.102.43.179:9934/test1?useUnicode=true&characterEncoding=utf-8&mysqlEncoding=utf8&useSSL=false&serverTimezone=GMT
+      db2:
+        username: root
+        password: brzj123456
+        url: jdbc:mysql://39.102.43.179:9934/test2?useUnicode=true&characterEncoding=utf-8&mysqlEncoding=utf8&useSSL=false&serverTimezone=GMT
+
+    rules:
+      # 配置分片规则
+      sharding:
+        sharding-algorithms:
+          database-inline:
+            type: INLINE
+            props:
+              algorithm-expression: db$->{group_code}
+          table-inline:
+            type: INLINE
+            props:
+              algorithm-expression: user_info_$->{project_id}
+
+        key-generators:
+          snowflake:
+            type: SNOWFLAKE
+            props:
+              worker-id: 123
+
+        #binding-tables: user_info
+        tables:
+          user_info:
+            actual-data-nodes: db${1..2}.user_info_${1..2}
+            database-strategy:
+              standard:
+                sharding-column: group_code
+                sharding-algorithm-name: database-inline
+            table-strategy:
+              standard:
+                sharding-algorithm-name: table-inline
+                sharding-column: project_id
+
+            key-generate-strategy:
+              column: project_id
+              key-generator-name: snowflake
+  h2:
+    console:
+      #进行该配置，程序开启时就会启动h2 web consloe。当然这是默认的，如果你不想在启动程序时启动h2 web consloe，那么就设置为false。'
+      enabled: true
+      #进行该配置，你就可以通过YOUR_URL/h2访问h2 web consloe。YOUR_URL是你程序的访问URl。'
+      path: /h2-console
+      settings:
+        # 进行该配置后，h2 web consloe就可以在远程访问了。否则只能在本机访问。'
+        web-allow-others: true
+  jpa:
+    hibernate:
+      #设置ddl模式'
+      ddl-auto: update
+    #启用SQL语句的日志记录'
+    show-sql: true
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*Mapper.xml
+  global-config:
+    banner: false
+    db-config:
+      table-underline: false
+      capital-mode: true
+      id-type: ID_WORKER
+  #      logic-delete-field: is_deleted
+  #      logic-delete-value: 1
+  #      logic-not-delete-value: 0
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    root: info
+    com.baomidou.mybatisplus.samples.pagination: info
+    com.baomidou.dynamic: debug
