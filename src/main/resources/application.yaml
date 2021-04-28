@@ -10,16 +10,16 @@ spring:
       datasource:
         master:
           username: root
-          password: brzj123456
+          password: password
           type: com.alibaba.druid.pool.DruidDataSource
           driver-class-name: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://39.102.43.179:9934/test1?useUnicode=true&characterEncoding=utf-8&mysqlEncoding=utf8&useSSL=false&serverTimezone=GMT
+          url: jdbc:mysql://localhost:9934/test1?useUnicode=true&characterEncoding=utf-8&mysqlEncoding=utf8&useSSL=false&serverTimezone=GMT
         slave:
           username: root
-          password: brzj123456
+          password: password
           type: com.alibaba.druid.pool.DruidDataSource
           driver-class-name: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://39.102.43.179:9934/test2?useUnicode=true&characterEncoding=utf-8&mysqlEncoding=utf8&useSSL=false&serverTimezone=GMT
+          url: jdbc:mysql://localhost:9934/test2?useUnicode=true&characterEncoding=utf-8&mysqlEncoding=utf8&useSSL=false&serverTimezone=GMT
         h2:
           username: sa
           password: sa
@@ -47,12 +47,12 @@ spring:
       names: db1,db2
       db1:
         username: root
-        password: brzj123456
-        url: jdbc:mysql://39.102.43.179:9934/test1?useUnicode=true&characterEncoding=utf-8&mysqlEncoding=utf8&useSSL=false&serverTimezone=GMT
+        password: password
+        url: jdbc:mysql://localhost:9934/test1?useUnicode=true&characterEncoding=utf-8&mysqlEncoding=utf8&useSSL=false&serverTimezone=GMT
       db2:
         username: root
-        password: brzj123456
-        url: jdbc:mysql://39.102.43.179:9934/test2?useUnicode=true&characterEncoding=utf-8&mysqlEncoding=utf8&useSSL=false&serverTimezone=GMT
+        password: password
+        url: jdbc:mysql://localhost:9934/test2?useUnicode=true&characterEncoding=utf-8&mysqlEncoding=utf8&useSSL=false&serverTimezone=GMT
 
     rules:
       # 配置分片规则
